@@ -1,0 +1,24 @@
+{% extends 'pages/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class = "container my-4 text-center gap-1">
+            <h1>Let your eyes bask in the glory of our category selection!</h1>
+        </div>
+        <div class="container text-center">
+            {% for category in categories %}
+            <div class="row my-2 align-items-center border border-primary-subtle rounded-3">
+                <div class="col-2">
+                    <h4>{{category.title}}</h4>
+                </div>
+                <div class="col">
+                    <h5>{{category.description}}<h5>
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-primary">Check</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
