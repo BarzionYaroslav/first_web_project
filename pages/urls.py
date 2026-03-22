@@ -1,9 +1,10 @@
 from django.urls import path
 
-from pages.views import index
+import pages.views as view
 
 app_name = "pages"
 
 urlpatterns = [
-    path("", index, name="index"),
+    path("", view.index, name="index"),
+    path("categories/", view.categories, name="categories"),
 ]
