@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Book
 
 # Create your views here.
 def index(request):
@@ -10,19 +11,22 @@ def index(request):
                 "title": "Products",
                 "description": "Scroll through our great assortment of books, now available in all flavors of Touhou Project",
                 "button": "Scroll",
-                "image_source": "https://placehold.co/300"
+                "image_source": "https://placehold.co/300",
+                "href": "pages:books"
             },
             {
                 "title": "Posts",
                 "description": "Check out the posts about your favorite books and general website news",
                 "button": "Check out",
-                "image_source": "https://placehold.co/300"
+                "image_source": "https://placehold.co/300",
+                "href": "pages:index"
             },
             {
                 "title": "Services",
                 "description": "Check the services this website provides",
                 "button": "Visit",
-                "image_source": "https://placehold.co/300"
+                "image_source": "https://placehold.co/300",
+                "href": "pages:index"
             }
         ]
     }
@@ -39,3 +43,10 @@ def categories(request):
         ]
     }
     return render(request, 'pages/categories.html', context)
+
+def book_list(request):
+    products = Book.objects.all()
+    context = {
+        "products": products
+    }
+    return render(request, 'pages/books.html', context)

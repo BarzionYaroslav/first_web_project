@@ -22,16 +22,18 @@
         <div class="container my-4">
             <div class="row">
                 {% for card in cards%}
+                {% with urling=card.href%}
                 <div class="col">
                     <div class="card">
                         <img src="{{card.image_source}}" class="card-img-top img-thumbnail">
                         <div class="card-body">
                             <h5 class="card-title">{{card.title}}</h5>
                             <p>{{card.description}}</p>
-                            <button type="button" class="btn btn-primary">{{card.button}}</button>
+                            <a href="{% url urling %}"class="btn btn-primary">{{card.button}}</a>
                         </div>
                     </div>
                 </div>
+                {% endwith %}
                 {% endfor %}
             </div>
         </div>
