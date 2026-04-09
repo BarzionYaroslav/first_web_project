@@ -13,6 +13,7 @@
                         <h5 class = "card-header">{{product.name}}</h5>
                         <div class="card-body">
                             <p>{{product.description|truncatewords:20}}</p>
+                            <a href="{%url 'pages:book_detail' product.id%}" class="btn btn-primary stretched-link">Read it!</a>
                         </div>
                         <div class="card-footer">Stock: {{product.stock}} Price: {{product.price}}</div>
                     </div>
