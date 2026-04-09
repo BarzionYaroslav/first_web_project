@@ -1,0 +1,15 @@
+{% extends 'pages/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class = "container my-4 text-center gap-1">
+            <h1>{{book.name}}</h1>
+        </div>
+        <div class="container text-center">
+            <p>{{book.description}}</p>
+            <p>Stock: {{book.stock}} Price: {{book.price}}</p>
+            <a href="{%url 'pages:books'%}" class="btn btn-primary">Go Back</a>
+            <a href="#" class="btn btn-primary">Buy</a>
+        </div>
+    </div>
+{% endblock %}
