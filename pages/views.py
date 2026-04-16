@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Book
+from .forms import FeedbackForm
 
 # Create your views here.
 def index(request):
@@ -22,11 +23,11 @@ def index(request):
                 "href": "pages:index"
             },
             {
-                "title": "Services",
-                "description": "Check the services this website provides",
-                "button": "Visit",
+                "title": "Support",
+                "description": "Contact our support team for anything, really!",
+                "button": "Contact",
                 "image_source": "https://placehold.co/300",
-                "href": "pages:index"
+                "href": "pages:contact"
             }
         ]
     }
@@ -57,3 +58,14 @@ def book_details(request, id):
         "book": book
     }
     return render(request, 'pages/book_detail.html', context)
+
+def contact(request):
+    if request.method == "POST":
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            return redirect("pages:index")
+    else:
+        form = FeedbackForm()
+    
+    return render(request, 'pages/contact.html', {"form": form})
