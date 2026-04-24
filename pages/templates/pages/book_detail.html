@@ -9,6 +9,7 @@
             <p>{{book.description}}</p>
             <p>Stock: {{book.stock}} Price: {{book.price}}</p>
             <a href="{%url 'pages:books'%}" class="btn btn-primary">Go Back</a>
+            <a href="{%url 'pages:edit_book' book.id%}" class="btn btn-primary">Edit</a>
             <a href="#" class="btn btn-primary">Buy</a>
         </div>
     </div>
