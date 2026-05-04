@@ -1,5 +1,7 @@
 from django import forms
 from .models import Book
+from django.contrib.auth.forms import UserCreationForm
+from typing import Any
 
 class FeedbackForm(forms.Form):
     subject = forms.CharField(
@@ -26,3 +28,9 @@ class BookForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+class MyUserCreationForm(UserCreationForm):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        for _, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"

@@ -22,9 +22,24 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="{% url 'pages:categories' %}">Categories</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Login</a>
-                        </li>
+                        {%if request.user.is_authenticated == False%}
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{% url 'login'%}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{% url 'pages:register'%}">Register</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link disabled" aria-current="page" href="#">Hello, {{request.user.username}}</a>
+                            </li>
+                            <li class="nav-item">
+                                <form class="col-1" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link" formaction="{% url 'logout' %}">Quit</button>
+                                </form>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

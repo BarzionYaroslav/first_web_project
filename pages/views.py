@@ -1,6 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse
 from .models import Book
-from .forms import FeedbackForm, BookForm
+from .forms import FeedbackForm, BookForm, MyUserCreationForm
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -70,19 +73,27 @@ def contact(request):
     
     return render(request, 'pages/contact.html', {"form": form})
 
+@login_required
 def create_book(request):
     if request.method == "POST":
         form = BookForm(request.POST)
         if form.is_valid():
-            book = form.save()
+            book = form.save(commit=False)
+            book.author = request.user
+            book.save()
             return redirect("pages:book_detail", book.id)
     else:
         form = BookForm()
     
     return render(request, 'pages/item_form.html', {"form": form, "title": "Creating..."})
 
+@login_required
 def edit_book(request, id):
     book = get_object_or_404(Book, id=id)
+    if request.user != book.author:
+        return HttpResponse(
+            "You cannot edit this book", status=403
+        )
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
@@ -92,3 +103,14 @@ def edit_book(request, id):
         form = BookForm(instance=book)
     
     return render(request, 'pages/item_form.html', {"form": form, "title": "Editing..."})
+
+def register(request):
+    if request.method == "POST":
+        form = MyUserCreationForm(request.POST)
+        if form.is_valid():
+            book = form.save()
+            return redirect(reverse("login"))
+    else:
+        form = MyUserCreationForm()
+    
+    return render(request, 'registration/register.html', {"form": form, "title": "Registering..."})
