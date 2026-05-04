@@ -7,6 +7,7 @@
         </div>
         <div class="container text-center">
             <p>{{book.description}}</p>
+            <p>By {{book.author.username}}</p>
             <p>Stock: {{book.stock}} Price: {{book.price}}</p>
             <a href="{%url 'pages:books'%}" class="btn btn-primary">Go Back</a>
             <a href="{%url 'pages:edit_book' book.id%}" class="btn btn-primary">Edit</a>
