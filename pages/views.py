@@ -76,7 +76,7 @@ def contact(request):
 @login_required
 def create_book(request):
     if request.method == "POST":
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
             book = form.save(commit=False)
             book.author = request.user
@@ -95,7 +95,7 @@ def edit_book(request, id):
             "You cannot edit this book", status=403
         )
     if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES, instance=book)
         if form.is_valid():
             form.save()
             return redirect("pages:book_detail", book.id)

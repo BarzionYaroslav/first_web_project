@@ -1,4 +1,5 @@
 {% extends 'pages/base.html' %}
+{% load static%}
 
 {% block content %}
     <div class="container">
@@ -14,6 +15,11 @@
                     <div class="card h-100 text-bg-info border border-primary-subtle rounded-3">
                         <h5 class = "card-header">{{product.name}}</h5>
                         <div class="card-body">
+                            {% if product.image %}
+                                <img src="{{ MEDIA_URL }}{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail md-1 mb-3">
+                            {% else %}
+                                <img src="{% static 'img/default.png' %}" class="img-thumbnail md-1 mb-3" alt="No image">
+                            {% endif %}
                             <p>{{product.description|truncatewords:20}}</p>
                             <a href="{%url 'pages:book_detail' product.id%}" class="btn btn-primary stretched-link">Read it!</a>
                         </div>

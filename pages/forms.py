@@ -21,12 +21,14 @@ class FeedbackForm(forms.Form):
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['name', 'description', 'price', 'stock']
+        fields = ['name', 'description', 'price', 'stock', 'image', 'tags']
         widgets = {
             'name': forms.TextInput(attrs={"class": "form-control"}),
             'description': forms.Textarea(attrs={"class": "form-control"}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={"class": "form-control"}),
+            'tags': forms.SelectMultiple(attrs={"class": "form-control"}),
         }
 
 class MyUserCreationForm(UserCreationForm):
