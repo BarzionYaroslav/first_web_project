@@ -32,5 +32,29 @@
                 </div>
             </div>
         </div>
+        <div class = "container my-4 text-center gap-1">
+            {% if user.is_authenticated %}
+            <form action="{% url 'pages:add_comment' book.pk %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Post Comment</button>
+            </form>
+            {%else%}
+            <p><a href="{% url 'login' %}">Login</a> to leave a comment.</p>
+            {%endif%}
+        </div>
+        <div class = "container my-4 text-center gap-1">
+            <h3>Comments: {{book.comments.count}}</h3>
+            {% for comment in book.comments.all %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <strong>{{ comment.author }}</strong> <small>{{ comment.created_at }}</small>
+                        <p>{{ comment.text }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No comments yet!</p>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

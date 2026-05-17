@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book
+from .models import Book, Comment
 from django.contrib.auth.forms import UserCreationForm
 from typing import Any
 
@@ -36,3 +36,11 @@ class MyUserCreationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for _, field in self.fields.items():
             field.widget.attrs["class"] = "form-control"
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["text"]
+        widgets = {
+            "text": forms.Textarea(attrs={"class": "form-control"}),
+        }
