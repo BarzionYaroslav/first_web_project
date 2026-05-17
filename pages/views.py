@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 from django.http import HttpResponse
-from .models import Book
-from .forms import FeedbackForm, BookForm, MyUserCreationForm
+from .models import Book, Comment
+from .forms import FeedbackForm, BookForm, MyUserCreationForm, CommentForm
 from django.urls import reverse
 
 # Create your views here.
@@ -58,7 +59,8 @@ def book_list(request):
 def book_details(request, id):
     book = get_object_or_404(Book, id=id)
     context = {
-        "book": book
+        "book": book,
+        "form": CommentForm()
     }
     return render(request, 'pages/book_detail.html', context)
 
@@ -114,3 +116,19 @@ def register(request):
         form = MyUserCreationForm()
     
     return render(request, 'registration/register.html', {"form": form, "title": "Registering..."})
+
+@login_required
+def create_comment(request, id):
+    book = get_object_or_404(Book, id=id)
+    form = CommentForm(request.POST)
+
+    if form.is_valid():
+        comment: Comment = form.save(commit=False)
+        comment.author = request.user
+        comment.book = book
+        comment.save()
+        messages.success(request, 'Comment was posted!')
+    else:
+        messages.error(request, "Error while creating comment!")
+
+    return redirect("pages:book_detail", book.id)

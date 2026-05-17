@@ -19,5 +19,20 @@ class Book(models.Model):
     image = models.ImageField(upload_to='book_images/', verbose_name='Изображение', blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
 
+    class Meta:
+        ordering = ("name",)
+
     def __str__(self) -> str:
         return f"{self.name}"
+
+class Comment(models.Model):
+    book = models.ForeignKey(Book, related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("created_at",)
+
+    def __str__(self) -> str:
+        return f'{self.author} - {self.book}'
