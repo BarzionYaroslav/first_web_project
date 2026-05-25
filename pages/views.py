@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Book, Comment
 from .forms import FeedbackForm, BookForm, MyUserCreationForm, CommentForm
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 # Create your views here.
 def index(request):
@@ -49,20 +51,21 @@ def categories(request):
     }
     return render(request, 'pages/categories.html', context)
 
-def book_list(request):
-    products = Book.objects.all()
-    context = {
-        "products": products
-    }
-    return render(request, 'pages/books.html', context)
+class BookList(ListView):
+    model = Book
+    template_name = 'pages/books.html'
+    context_object_name = 'products'
 
-def book_details(request, id):
-    book = get_object_or_404(Book, id=id)
-    context = {
-        "book": book,
-        "form": CommentForm()
-    }
-    return render(request, 'pages/book_detail.html', context)
+class BookDetail(DetailView):
+    model = Book
+    template_name = 'pages/book_detail.html'
+    context_object_name = "book"
+    pk_url_kwarg = "id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = CommentForm()
+        return context
 
 def contact(request):
     if request.method == "POST":
@@ -75,36 +78,34 @@ def contact(request):
     
     return render(request, 'pages/contact.html', {"form": form})
 
-@login_required
-def create_book(request):
-    if request.method == "POST":
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            book = form.save(commit=False)
-            book.author = request.user
-            book.save()
-            return redirect("pages:book_detail", book.id)
-    else:
-        form = BookForm()
-    
-    return render(request, 'pages/item_form.html', {"form": form, "title": "Creating..."})
+class CreateBook(LoginRequiredMixin, CreateView):
+    form_class = BookForm
+    template_name = 'pages/item_form.html'
+    success_url = "pages:book_detail"
 
-@login_required
-def edit_book(request, id):
-    book = get_object_or_404(Book, id=id)
-    if request.user != book.author:
-        return HttpResponse(
-            "You cannot edit this book", status=403
-        )
-    if request.method == "POST":
-        form = BookForm(request.POST, request.FILES, instance=book)
-        if form.is_valid():
-            form.save()
-            return redirect("pages:book_detail", book.id)
-    else:
-        form = BookForm(instance=book)
+    def form_valid(self, form: BookForm):
+        form.instance.author = self.request.user
+        messages.success("Book created successfully")
+        return super().form_valid(form)
+
+class EditBook(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'pages/item_form.html'
+    success_url = "pages:book_detail"
+    pk_url_kwarg = "id"
+    def test_func(self):
+        return self.request.user == self.get_object().author
+
+class DeleteBook(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Book
+    success_url = reverse_lazy("pages:books")
+    template_name = 'pages/book_confirm_delete.html'
+    pk_url_kwarg = "id"
     
-    return render(request, 'pages/item_form.html', {"form": form, "title": "Editing..."})
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
 
 def register(request):
     if request.method == "POST":
